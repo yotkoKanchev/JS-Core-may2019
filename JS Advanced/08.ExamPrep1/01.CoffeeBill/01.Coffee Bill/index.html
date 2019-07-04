@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coffee Bill</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<h2>Coffee Bill</h2>
+<table id="bill">
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+    </tr>
+    </thead>
+    <tbody id="product-list"></tbody>
+    <tfoot>
+    <tr>
+        <td>Total:</td>
+        <td>0.00</td>
+    </tr>
+    </tfoot>
+</table>
+<section id="add-product">
+    <h3>Add new product</h3>
+    <label>
+        <span>
+            Product:
+        </span>
+        <input type="text">
+    </label>
+    <label>
+        <span>
+            Price:
+        </span>
+        <input type="number">
+    </label>
+    <button onclick="addProduct()">Add</button>
+</section>
+
+<script>
+    function addProduct() {
+        let productElement = document.querySelector('input[type="text"]');
+        let priceElement = document.querySelector('input[type="number"]');
+        let addButtonElement = document.getElementsByTagName('button')[0];
+        let tbodyElement = document.getElementById('product-list');
+
+        addButtonElement.addEventListener('click', onclick());
+
+        function onclick() {
+            let product = productElement.value;
+            let price = +priceElement.value;
+
+            if (product && price > 0) {
+                let totalMoneyElement = document.getElementsByTagName('tfoot')[0].getElementsByTagName('td')[1];
+
+                let trElement = document.createElement('tr');
+                let tdProductElement = document.createElement('td');
+                let tdPriceElement = document.createElement('td');
+
+                tdProductElement.textContent = product;
+                tdPriceElement.textContent = price;
+                trElement.appendChild(tdProductElement);
+                trElement.appendChild(tdPriceElement);
+                tbodyElement.appendChild(trElement);
+
+                let currentTotalMoney = +totalMoneyElement.textContent;
+                totalMoneyElement.textContent = currentTotalMoney + price;
+            }
+            productElement.value = '';
+            priceElement.value = '';
+        }
+    }
+</script>
+
+</body>
+</html>
