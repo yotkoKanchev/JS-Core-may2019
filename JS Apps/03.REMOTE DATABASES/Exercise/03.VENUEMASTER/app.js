@@ -1,5 +1,9 @@
-let baseUrl = "https://baas.kinvey.com/";
-let base64Auth = btoa("guest:pass");
+const baseUrl = "https://baas.kinvey.com/";
+const base64Auth = btoa("guest:pass");
+const auth = {
+    "Authorization": "Basic " + base64Auth,
+    "Content-type": "application/json",
+};
 
 const inputElement = document.getElementById('venueDate');
 const venuesDivElement = document.getElementById('venue-info');
@@ -8,15 +12,12 @@ const listVenuesBtn = document.getElementById('getVenues');
 listVenuesBtn.addEventListener('click', listVenues);
 
 function listVenues() {
-    let date = inputElement.value;
-    let url = baseUrl + `rpc/kid_BJ_Ke8hZg/custom/calendar?query=${date}`;
+    let url = baseUrl + `rpc/kid_BJ_Ke8hZg/custom/calendar?query=${inputElement.value}`;
     let workingOnId = '';
 
     fetch(url, {
         method: 'POST',
-        headers: {
-            "Authorization": "Basic " + base64Auth,
-        }
+        headers: auth
     })
         .then(handler)
         .then(data => {
@@ -40,14 +41,10 @@ function listVenues() {
 
                     fetch(postUrl, {
                         method: 'POST',
-                        headers: {
-                            "Authorization": "Basic " + base64Auth,
-                            "Content-type": "application/json"
-                        }
+                        headers: auth
                     })
                         .then(handler)
                         .then(data => {
-                            console.log(data);
                             venuesDivElement.innerHTML = `
                             <p>You may print this page as your ticket.</p>
                             ${data.html}
@@ -64,9 +61,7 @@ function getVenuesInfo(id) {
 
     fetch(getUrl, {
         method: 'GET',
-        headers: {
-            "Authorization": "Basic " + base64Auth,
-        }
+        headers: auth
     })
         .then(handler)
         .then(venue => {
@@ -79,13 +74,13 @@ function getVenuesInfo(id) {
 function makePurchase(parentDiv, ticketsCount) {
     let name = parentDiv.getElementsByClassName('venue-name')[0].textContent;
     let price = parentDiv.getElementsByClassName('venue-price')[0].textContent;
-
+    let totalPrice = parseInt(price) * +ticketsCount;
     let confirmationDivText = `
     <span class="head">Confirm purchase</span>
     <div class="purchase-info">
         <span>${name}</span>
         <span>${ticketsCount} x ${price}</span>
-        <span>Total: ${+ticketsCount * +price} lv</span>
+        <span>Total: ${totalPrice} lv</span>
         <input type="button" value="Confirm">
     </div>`;
 
@@ -127,6 +122,5 @@ function handler(response) {
     if (response.status >= 400) {
         throw new Error(`Something went wrong. Error: ${response.statusText}`)
     }
-
     return response.json();
 }
